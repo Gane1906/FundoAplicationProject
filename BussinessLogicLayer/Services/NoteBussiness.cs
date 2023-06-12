@@ -18,7 +18,14 @@ namespace BussinessLogicLayer.Services
 
         public NoteEntity AddNote(NoteModel note, int UserId)
         {
-            return noteRepository.AddNote(note, UserId);
+            try
+            {
+                return noteRepository.AddNote(note, UserId);
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
         }
     }
 }

@@ -13,5 +13,6 @@ namespace ModelLayer.Model
         public string Image { get; set; }
         public bool IsArchive { get; set; }
         public bool IsTrash { get; set; }
+        public bool IsPinned { get; set; }
     }
 }

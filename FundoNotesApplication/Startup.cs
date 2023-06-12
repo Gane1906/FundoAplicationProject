@@ -40,6 +40,9 @@ namespace FundoNotesApplication
             services.AddDbContext<FundoContext>(option => option.UseSqlServer(Configuration["ConnectionStrings:FundooDB"]));
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IUserBusiness, UserBussiness>();
+            services.AddTransient<INoteRepository, NoteRepository>();
+            services.AddTransient<INoteBussiness, NoteBussiness>();
+
             services.AddSwaggerGen(a=>
             {
                 a.AddSecurityDefinition(

@@ -17,20 +17,29 @@ namespace RepositoryLayer.Services
         }
         public NoteEntity AddNote(NoteModel note,int UserId)
         {
-            NoteEntity entity = new NoteEntity();
-            entity.Title = note.Title;
-            entity.Description = note.Description;
-            entity.Remainder= note.Remainder;
-            entity.Color = note.Color;
-            entity.Image = note.Image;
-            entity.IsArchive = note.IsArchive;
-            entity.IsTrash = note.IsTrash;
-            entity.CreatedAt = DateTime.Now;
-            entity.ModifiedAt = DateTime.Now;
-            entity.UserId = UserId;
-            fundoContext.Notes.Add(entity);
-            fundoContext.SaveChanges();
-            return entity;
+            try
+            {
+                NoteEntity entity = new NoteEntity();
+                entity.Title = note.Title;
+                entity.Description = note.Description;
+                entity.Remainder = note.Remainder;
+                entity.Color = note.Color;
+                entity.Image = note.Image;
+                entity.IsArchive = note.IsArchive;
+                entity.IsTrash = note.IsTrash;
+                entity.IsPinned = note.IsPinned;
+                entity.CreatedAt = DateTime.Now;
+                entity.ModifiedAt = DateTime.Now;
+                entity.UserId = UserId;
+                fundoContext.Notes.Add(entity);
+                fundoContext.SaveChanges();
+                return entity;
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
         }
+        //public NoteEntity
     }
 }
