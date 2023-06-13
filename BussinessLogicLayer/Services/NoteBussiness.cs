@@ -27,11 +27,22 @@ namespace BussinessLogicLayer.Services
                 throw e;
             }
         }
-        public List<NoteEntity> GetAllNotes(int UserId)
+        public List<NoteEntity> GetAllNotesById(int UserId)
         {
             try
             {
-                return noteRepository.GetAllNotes(UserId);
+                return noteRepository.GetAllNotesById(UserId);
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
+        }
+        public List<NoteEntity> GetAllNotes()
+        {
+            try
+            {
+                return noteRepository.GetAllNotes();
             }
             catch(Exception e)
             {
@@ -54,6 +65,28 @@ namespace BussinessLogicLayer.Services
             try
             {
                 return noteRepository.NoteArchiveorNot(NoteId, userId);
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
+        }
+        public bool NoteTrashorNot(int NoteId, int userId)
+        {
+            try
+            {
+                return noteRepository.NoteArchiveorNot(NoteId, userId);
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
+        }
+        public NoteEntity UpdateNote(NoteModel note, int noteId, int userId)
+        {
+            try
+            {
+                return noteRepository.UpdateNote(note, noteId, userId);
             }
             catch(Exception e)
             {

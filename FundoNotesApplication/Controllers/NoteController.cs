@@ -43,12 +43,12 @@ namespace FundoNotesApplication.Controllers
         }
         [HttpGet]
         [Route("GetNoteById")]
-        public IActionResult GetAllNotes()
+        public IActionResult GetAllNotesById()
         {
             try
             {
                 int UserId = Convert.ToInt32(User.Claims.FirstOrDefault(x=>x.Type == "UserId").Value);
-                var list = noteBussiness.GetAllNotes(UserId);
+                var list = noteBussiness.GetAllNotesById(UserId);
                 if (list != null)
                 {
                     return Ok(new ResponseModel<List<NoteEntity>> { status = true, message="Notes displayed sucesfully",Data = list }) ;
@@ -56,6 +56,27 @@ namespace FundoNotesApplication.Controllers
                 else
                 {
                     return BadRequest(new ResponseModel<List<NoteEntity>> { status = false, message = "note display failed" });
+                }
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
+        }
+        [HttpGet]
+        [Route("GetAllNotes")]
+        public IActionResult GetAllNotes()
+        {
+            try
+            {
+                var list = noteBussiness.GetAllNotes();
+                if (list != null)
+                {
+                    return Ok(new ResponseModel<List<NoteEntity>> { status = true, message = "notes displayed sucesfully", Data = list });
+                }
+                else
+                {
+                    return BadRequest(new ResponseModel<List<NoteEntity>> { status = false, message = "failed to load notes" });
                 }
             }
             catch(Exception e)
@@ -107,5 +128,43 @@ namespace FundoNotesApplication.Controllers
                 throw e;
             }
         }
+        [HttpGet]
+        [Route("Trash/Restore")]
+        public IActionResult NoteTrashorNot(int NoteId)
+        {
+            int userId = Convert.ToInt32(User.Claims.FirstOrDefault(a => a.Type == "UserId").Value);
+            var res = noteBussiness.NoteArchiveorNot(NoteId, userId);
+            if (res)
+            {
+                return Ok(new ResponseModel<bool> { status = true, message = "Moved to trash", Data = res });
+            }
+            else
+            {
+                return Ok(new ResponseModel<bool> { status = true, message = "Restored sucessful", Data = res }); 
+            }
+        }
+        [HttpPost("updateNote")]
+        public IActionResult UpdateNote(int noteId,NoteModel note)
+        {
+            try
+            {
+                int userId = Convert.ToInt32(User.Claims.FirstOrDefault(a => a.Type == "UserId").Value);
+                var result = noteBussiness.UpdateNote(note, noteId, userId);
+                if (result != null)
+                {
+                    return Ok(new ResponseModel<NoteEntity> { status = true, message = "Note Update sucessful", Data = result });
+                }
+                else
+                {
+                    return BadRequest(new ResponseModel<NoteEntity> { status = false, message = "Note update unsuccesful", Data = result });
+                }
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
+            
+        }
+
     }
 }

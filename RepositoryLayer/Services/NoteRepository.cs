@@ -2,10 +2,12 @@
 using RepositoryLayer.Context;
 using RepositoryLayer.Entity;
 using RepositoryLayer.Interface;
+using RepositoryLayer.Migrations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace RepositoryLayer.Services
@@ -42,7 +44,7 @@ namespace RepositoryLayer.Services
                 throw e;
             }
         }
-        public List<NoteEntity> GetAllNotes(int UserId)
+        public List<NoteEntity> GetAllNotesById(int UserId)
         {
             try
             {
@@ -60,13 +62,30 @@ namespace RepositoryLayer.Services
                 throw e;
             }
         }
+        public List<NoteEntity> GetAllNotes()
+        {
+            try
+            {
+                var noteList = fundoContext.Notes.ToList();
+                return noteList;
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
+        }
         public bool NotePinorUnpin(int NoteId,int userId)
         {
             try
             {
                 NoteEntity note = fundoContext.Notes.Where(x => x.NoteId == NoteId).FirstOrDefault();
+
                 if (note.IsPinned == false)
                 {
+                    if (note.IsArchive == true)
+                    {
+                        note.IsArchive = false;
+                    }
                     note.IsPinned = true;
                     fundoContext.SaveChanges();
                     return true;
@@ -108,6 +127,64 @@ namespace RepositoryLayer.Services
             catch(Exception e)
             {
                 throw e;
+            }
+        }
+        public bool NoteTrashorNot(int NoteId, int userId)
+        {
+            try
+            {
+                NoteEntity note = fundoContext.Notes.Where(x => x.NoteId == NoteId).FirstOrDefault();
+                if(note.IsTrash == false)
+                {
+                    if (note.IsPinned == true)
+                    {
+                        note.IsPinned = false;
+                    }
+                    note.IsTrash = true;
+                    fundoContext.SaveChanges();
+                    return true;
+                }
+                else
+                {
+                    note.IsTrash = false;
+                    fundoContext.SaveChanges();
+                    return false;
+                }
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
+        }
+        public NoteEntity UpdateNote(NoteModel note,int noteId,int userId)
+        {
+            var user = fundoContext.Notes.Where(x => x.UserId == userId);
+            if (user != null)
+            {
+                var entity = user.FirstOrDefault(x => x.NoteId == noteId);
+                if (entity != null)
+                {
+                    entity.Title = note.Title;
+                    entity.Title = note.Title;
+                    entity.Description = note.Description;
+                    entity.Remainder = note.Remainder;
+                    entity.Color = note.Color;
+                    entity.Image = note.Image;
+                    entity.IsArchive = note.IsArchive;
+                    entity.IsTrash = note.IsTrash;
+                    entity.IsPinned = note.IsPinned;
+                    entity.ModifiedAt = DateTime.Now;
+                    fundoContext.SaveChanges();
+                    return entity;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                return null;
             }
         }
     }
