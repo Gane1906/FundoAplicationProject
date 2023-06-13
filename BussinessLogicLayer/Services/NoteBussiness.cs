@@ -2,6 +2,7 @@
 using ModelLayer.Model;
 using RepositoryLayer.Entity;
 using RepositoryLayer.Interface;
+using RepositoryLayer.Services;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -98,6 +99,17 @@ namespace BussinessLogicLayer.Services
             try
             {
                 return noteRepository.DeleteNote(userId, noteId);
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
+        }
+        public NoteEntity UpdateColor(string colour, int noteId, int userId)
+        {
+            try
+            {
+                return noteRepository.UpdateColor(colour, noteId, userId);
             }
             catch(Exception e)
             {

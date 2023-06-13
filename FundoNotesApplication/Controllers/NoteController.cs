@@ -1,13 +1,18 @@
 ﻿using BussinessLogicLayer.Interface;
 using Experimental.System.Messaging;
+using GreenPipes.Caching;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Distributed;
 using ModelLayer.Model;
+using Newtonsoft.Json;
 using RepositoryLayer.Context;
 using RepositoryLayer.Entity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace FundoNotesApplication.Controllers
 {
@@ -16,9 +21,11 @@ namespace FundoNotesApplication.Controllers
     public class NoteController : ControllerBase
     {
         private readonly INoteBussiness noteBussiness;
-        public NoteController(INoteBussiness noteBussiness)
+        private readonly IDistributedCache cache;
+        public NoteController(INoteBussiness noteBussiness, IDistributedCache cache)
         {
             this.noteBussiness = noteBussiness;
+            this.cache = cache;
         }
         [HttpPost("AddNote")]
         public IActionResult AddNote(NoteModel note)
@@ -66,21 +73,29 @@ namespace FundoNotesApplication.Controllers
         [HttpGet]
         [Route("GetAllNotes")]
         [AllowAnonymous]
-        public IActionResult GetAllNotes()
+        public async Task<IActionResult> GetAllNotes()
         {
             try
             {
-                var list = noteBussiness.GetAllNotes();
-                if (list != null)
+                string cacheKey = "NoteList";
+                List<NoteEntity> NoteList;
+                byte[] notesData= await cache.GetAsync(cacheKey);
+                if (notesData != null)
                 {
-                    return Ok(new ResponseModel<List<NoteEntity>> { status = true, message = "notes displayed sucesfully", Data = list });
+                    var seriliazedNoteData = Encoding.UTF8.GetString(notesData);
+                    NoteList = JsonConvert.DeserializeObject<List<NoteEntity>>(seriliazedNoteData);
                 }
                 else
                 {
-                    return BadRequest(new ResponseModel<List<NoteEntity>> { status = false, message = "failed to load notes" });
+                    NoteList = noteBussiness.GetAllNotes();
+                    var serializedNoteData = JsonConvert.SerializeObject(NoteList);
+                    var redisNoteList = Encoding.UTF8.GetBytes(serializedNoteData);
+                    var options = new DistributedCacheEntryOptions().SetAbsoluteExpiration(DateTime.Now.AddMinutes(10)).SetSlidingExpiration(TimeSpan.FromMinutes(5));
+                    await cache.SetAsync(cacheKey, redisNoteList, options);
                 }
+                return Ok(NoteList);
             }
-            catch (Exception e)
+            catch(Exception e)
             {
                 throw e;
             }
@@ -185,6 +200,20 @@ namespace FundoNotesApplication.Controllers
             catch(Exception e)
             {
                 throw e;
+            }
+        }
+        [HttpPost("UpdateColor")]
+        public IActionResult UpdateColor(int noteId,string color)
+        {
+            int userId = Convert.ToInt32(User.Claims.FirstOrDefault(x => x.Type == "UserId").Value);
+            var res = noteBussiness.UpdateColor(color, noteId, userId);
+            if (res != null)
+            {
+                return Ok(new ResponseModel<NoteEntity> { status = true, message = "Color updated succesfully", Data = res });
+            }
+            else
+            {
+                return BadRequest(new ResponseModel<NoteEntity> { status = false, message = "Color update unsucessful", Data = res });
             }
         }
 

@@ -5,6 +5,7 @@ using RepositoryLayer.Interface;
 using RepositoryLayer.Migrations;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
@@ -204,6 +205,28 @@ namespace RepositoryLayer.Services
                 }
             }
             catch (Exception e)
+            {
+                throw e;
+            }
+        }
+        public NoteEntity UpdateColor(string colour,int noteId,int userId)
+        {
+            try
+            {
+                var user = fundoContext.Notes.Where(x => x.UserId == userId);
+                if (user != null)
+                {
+                    var note = user.FirstOrDefault(x => x.NoteId == noteId);
+                    note.Color = colour;
+                    fundoContext.SaveChanges();
+                    return note;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch(Exception e)
             {
                 throw e;
             }

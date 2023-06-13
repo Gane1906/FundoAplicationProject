@@ -42,6 +42,8 @@ namespace FundoNotesApplication
             services.AddTransient<IUserBusiness, UserBussiness>();
             services.AddTransient<INoteRepository, NoteRepository>();
             services.AddTransient<INoteBussiness, NoteBussiness>();
+            services.AddDistributedMemoryCache();
+            services.AddStackExchangeRedisCache(options => { options.Configuration = Configuration["RedisCacheUrl"]; });
 
             services.AddSwaggerGen(a=>
             {

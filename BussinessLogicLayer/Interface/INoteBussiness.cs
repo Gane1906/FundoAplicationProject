@@ -16,5 +16,6 @@ namespace BussinessLogicLayer.Interface
         public bool NoteTrashorNot(int NoteId, int userId);
         public NoteEntity UpdateNote(NoteModel note, int noteId, int userId);
         public bool DeleteNote(int userId, int noteId);
+        public NoteEntity UpdateColor(string colour, int noteId, int userId);
     }
 }
