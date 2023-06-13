@@ -65,6 +65,7 @@ namespace FundoNotesApplication.Controllers
         }
         [HttpGet]
         [Route("GetAllNotes")]
+        [AllowAnonymous]
         public IActionResult GetAllNotes()
         {
             try
@@ -79,7 +80,7 @@ namespace FundoNotesApplication.Controllers
                     return BadRequest(new ResponseModel<List<NoteEntity>> { status = false, message = "failed to load notes" });
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 throw e;
             }
@@ -164,6 +165,27 @@ namespace FundoNotesApplication.Controllers
                 throw e;
             }
             
+        }
+        [HttpPost("DeleteNode")]
+        public IActionResult DeleteNote(int noteId)
+        {
+            try
+            {
+                int userId = Convert.ToInt32(User.Claims.FirstOrDefault(a => a.Type == "UserId").Value);
+                bool output = noteBussiness.DeleteNote(userId,noteId);
+                if (output)
+                {
+                    return Ok(new ResponseModel<bool> { status = true,message="Deleted succesful",Data=output });
+                }
+                else
+                {
+                    return BadRequest(new ResponseModel<bool> { status = false, message = "Cant delete", Data = output });
+                }
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
         }
 
     }

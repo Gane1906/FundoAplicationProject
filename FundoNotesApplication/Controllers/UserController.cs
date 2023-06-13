@@ -8,6 +8,7 @@ using ModelLayer.Model;
 using RepositoryLayer.Context;
 using RepositoryLayer.Entity;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -19,10 +20,12 @@ namespace FundoNotesApplication.Controllers
     {
         private readonly IUserBusiness userBussiness;
         private readonly FundoContext fundoContext;
-        public UserController(IUserBusiness userBussiness,FundoContext fundoContext)
+        private readonly INoteBussiness noteBussiness;
+        public UserController(IUserBusiness userBussiness,FundoContext fundoContext, INoteBussiness noteBussiness)
         {
             this.userBussiness = userBussiness;
             this.fundoContext = fundoContext;
+            this.noteBussiness = noteBussiness;
         }
         [HttpPost]
         [Route("Register")]
@@ -87,6 +90,7 @@ namespace FundoNotesApplication.Controllers
                 return BadRequest(new ResponseModel<string> { status = false, message = "Mail not sent" });
             }
         }
+      
     }
 }
 

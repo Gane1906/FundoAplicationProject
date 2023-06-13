@@ -48,14 +48,8 @@ namespace RepositoryLayer.Services
         {
             try
             {
-                List<NoteEntity> result = new List<NoteEntity>();
-                var count = fundoContext.Notes.Where(x => x.UserId == UserId).Count();
-                for(int id=1; id <= count;id++)
-                {
-                    var note = fundoContext.Notes.Where(x => x.NoteId == id).FirstOrDefault();
-                    result.Add(note);
-                }
-                return result;
+                var list = fundoContext.Notes.Where(x => x.UserId == UserId).ToList();
+                return list;
             }
             catch(Exception e)
             {
@@ -185,6 +179,33 @@ namespace RepositoryLayer.Services
             else
             {
                 return null;
+            }
+        }
+        public bool DeleteNote(int userId,int noteId)
+        {
+            try
+            {
+                var entity = fundoContext.Notes.Where(x => x.NoteId == noteId).FirstOrDefault();
+                if (entity != null)
+                {
+                    if (entity.IsArchive == true)
+                    {
+                        fundoContext.Notes.Remove(entity);
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
             }
         }
     }

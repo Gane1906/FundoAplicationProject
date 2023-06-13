@@ -93,5 +93,16 @@ namespace BussinessLogicLayer.Services
                 throw e;
             }
         }
+        public bool DeleteNote(int userId, int noteId)
+        {
+            try
+            {
+                return noteRepository.DeleteNote(userId, noteId);
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
+        }
     }
 }
