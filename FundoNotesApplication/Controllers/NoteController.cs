@@ -6,6 +6,7 @@ using ModelLayer.Model;
 using RepositoryLayer.Context;
 using RepositoryLayer.Entity;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace FundoNotesApplication.Controllers
@@ -33,6 +34,72 @@ namespace FundoNotesApplication.Controllers
                 else
                 {
                     return BadRequest(new ResponseModel<NoteEntity> { status = false, message = "note adding failed", Data = null });
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+        [HttpGet]
+        [Route("GetNoteById")]
+        public IActionResult GetAllNotes()
+        {
+            try
+            {
+                int UserId = Convert.ToInt32(User.Claims.FirstOrDefault(x=>x.Type == "UserId").Value);
+                var list = noteBussiness.GetAllNotes(UserId);
+                if (list != null)
+                {
+                    return Ok(new ResponseModel<List<NoteEntity>> { status = true, message="Notes displayed sucesfully",Data = list }) ;
+                }
+                else
+                {
+                    return BadRequest(new ResponseModel<List<NoteEntity>> { status = false, message = "note display failed" });
+                }
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
+        }
+        [HttpGet]
+        [Route("NotePin/unpin")]
+        public IActionResult NotePinorUnpin(int NoteId)
+        {
+            try
+            {
+                int UserId = Convert.ToInt32(User.Claims.FirstOrDefault(x => x.Type == "UserId").Value);
+                var res = noteBussiness.NotePinorUnpin(NoteId, UserId);
+                if (res)
+                {
+                    return Ok(new ResponseModel<bool> { status = true, message = "Note pinned" });
+                }
+                else
+                {
+                    return Ok(new ResponseModel<bool> { status = true,message="Note unpinned " });
+                }
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
+        }
+        [HttpGet]
+        [Route("Archive/UnArchive")]
+        public IActionResult NoteArchiveorUnarchive(int NoteId)
+        {
+            try
+            {
+                int UserId = Convert.ToInt32(User.Claims.FirstOrDefault(x => x.Type == "UserId").Value);
+                var res = noteBussiness.NoteArchiveorNot(NoteId, UserId);
+                if (res)
+                {
+                    return Ok(new ResponseModel<bool> { status = true, message = "Note Archieved", Data = res });
+                }
+                else
+                {
+                    return Ok(new ResponseModel<bool> { status = true, message = "Note Unarchieved", Data = res });
                 }
             }
             catch(Exception e)

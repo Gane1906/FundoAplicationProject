@@ -27,5 +27,38 @@ namespace BussinessLogicLayer.Services
                 throw e;
             }
         }
+        public List<NoteEntity> GetAllNotes(int UserId)
+        {
+            try
+            {
+                return noteRepository.GetAllNotes(UserId);
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
+        }
+        public bool NotePinorUnpin(int NoteId, int userId)
+        {
+            try
+            {
+                return noteRepository.NotePinorUnpin(NoteId, userId);
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
+        }
+        public bool NoteArchiveorNot(int NoteId, int userId)
+        {
+            try
+            {
+                return noteRepository.NoteArchiveorNot(NoteId, userId);
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
+        }
     }
 }

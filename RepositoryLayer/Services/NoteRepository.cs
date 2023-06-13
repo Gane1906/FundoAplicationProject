@@ -4,6 +4,8 @@ using RepositoryLayer.Entity;
 using RepositoryLayer.Interface;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace RepositoryLayer.Services
@@ -40,6 +42,73 @@ namespace RepositoryLayer.Services
                 throw e;
             }
         }
-        //public NoteEntity
+        public List<NoteEntity> GetAllNotes(int UserId)
+        {
+            try
+            {
+                List<NoteEntity> result = new List<NoteEntity>();
+                var count = fundoContext.Notes.Where(x => x.UserId == UserId).Count();
+                for(int id=1; id <= count;id++)
+                {
+                    var note = fundoContext.Notes.Where(x => x.NoteId == id).FirstOrDefault();
+                    result.Add(note);
+                }
+                return result;
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
+        }
+        public bool NotePinorUnpin(int NoteId,int userId)
+        {
+            try
+            {
+                NoteEntity note = fundoContext.Notes.Where(x => x.NoteId == NoteId).FirstOrDefault();
+                if (note.IsPinned == false)
+                {
+                    note.IsPinned = true;
+                    fundoContext.SaveChanges();
+                    return true;
+                }
+                else
+                {
+                    note.IsPinned = false;
+                    fundoContext.SaveChanges();
+                    return false;
+                }
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
+        }
+        public bool NoteArchiveorNot(int NoteId,int userId)
+        {
+            try
+            {
+                NoteEntity note = fundoContext.Notes.Where(x => x.NoteId == NoteId).FirstOrDefault();
+                if (note.IsArchive == false)
+                {
+                    if (note.IsPinned == true)
+                    {
+                        note.IsPinned = false;
+                    }
+                    note.IsArchive = true;
+                    fundoContext.SaveChanges();
+                    return true;
+                }
+                else
+                {
+                    note.IsArchive = false;
+                    fundoContext.SaveChanges();
+                    return false;
+                }
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
+        }
     }
 }
