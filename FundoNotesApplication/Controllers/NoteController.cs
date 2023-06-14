@@ -205,17 +205,65 @@ namespace FundoNotesApplication.Controllers
         [HttpPost("UpdateColor")]
         public IActionResult UpdateColor(int noteId,string color)
         {
-            int userId = Convert.ToInt32(User.Claims.FirstOrDefault(x => x.Type == "UserId").Value);
-            var res = noteBussiness.UpdateColor(color, noteId, userId);
-            if (res != null)
+            try
             {
-                return Ok(new ResponseModel<NoteEntity> { status = true, message = "Color updated succesfully", Data = res });
+                int userId = Convert.ToInt32(User.Claims.FirstOrDefault(x => x.Type == "UserId").Value);
+                var res = noteBussiness.UpdateColor(color, noteId, userId);
+                if (res != null)
+                {
+                    return Ok(new ResponseModel<NoteEntity> { status = true, message = "Color updated succesfully", Data = res });
+                }
+                else
+                {
+                    return BadRequest(new ResponseModel<NoteEntity> { status = false, message = "Color update unsucessful", Data = res });
+                }
             }
-            else
+            catch(Exception e)
             {
-                return BadRequest(new ResponseModel<NoteEntity> { status = false, message = "Color update unsucessful", Data = res });
+                throw e;
             }
         }
-
+        [HttpPost("UploadImage")]
+        public IActionResult UploadImage(string filePath,long noteId)
+        {
+            try
+            {
+                int userId = Convert.ToInt32(User.Claims.FirstOrDefault(x => x.Type == "UserId").Value);
+                var image = noteBussiness.UploadImage(filePath, noteId, userId);
+                if (image != null)
+                {
+                    return Ok(new ResponseModel<string> { status = true, message = "Image uploaded succesful", Data = image });
+                }
+                else
+                {
+                    return BadRequest(new ResponseModel<string> { status = false, message = "upload unsuccesful", Data = image });
+                }
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
+        }
+        [HttpPost("UpdateRemainder")]
+        public IActionResult UpdateRemainder(long noteId,DateTime remainder)
+        {
+            try
+            {
+                int userId = Convert.ToInt32(User.Claims.FirstOrDefault(x => x.Type == "UserId").Value);
+                var result = noteBussiness.UpdateRemainder(noteId, remainder, userId);
+                if (result)
+                {
+                    return Ok(new ResponseModel<bool> { status = true, message = "Remainder updated", Data = result });
+                }
+                else
+                {
+                    return BadRequest(new ResponseModel<bool> { status = false, message = "Failed to upload", Data = result });
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
     }
 }

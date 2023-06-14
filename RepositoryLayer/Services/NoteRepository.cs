@@ -1,4 +1,7 @@
-﻿using ModelLayer.Model;
+﻿using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using Microsoft.Extensions.Configuration;
+using ModelLayer.Model;
 using RepositoryLayer.Context;
 using RepositoryLayer.Entity;
 using RepositoryLayer.Interface;
@@ -16,9 +19,11 @@ namespace RepositoryLayer.Services
     public class NoteRepository : INoteRepository
     {
         public FundoContext fundoContext;
-        public NoteRepository(FundoContext fundoContext)
+        private readonly IConfiguration configuration;
+        public NoteRepository(FundoContext fundoContext, IConfiguration configuration)
         {
             this.fundoContext = fundoContext;
+            this.configuration = configuration;
         }
         public NoteEntity AddNote(NoteModel note,int UserId)
         {
@@ -217,9 +222,82 @@ namespace RepositoryLayer.Services
                 if (user != null)
                 {
                     var note = user.FirstOrDefault(x => x.NoteId == noteId);
-                    note.Color = colour;
-                    fundoContext.SaveChanges();
-                    return note;
+                    if (note != null)
+                    {
+                        note.Color = colour;
+                        note.ModifiedAt = DateTime.Now;
+                        fundoContext.SaveChanges();
+                        return note;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
+        }
+        public bool UpdateRemainder(long noteId,DateTime remainder,int userId)
+        {
+            try
+            {
+                var user = fundoContext.Notes.Where(x => x.UserId == userId);
+                if (user != null)
+                {
+                    var note = user.FirstOrDefault(x => x.NoteId == noteId);
+                    if (note != null)
+                    {
+                        note.Remainder = remainder;
+                        note.ModifiedAt = DateTime.Now;
+                        fundoContext.SaveChanges();
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else { return false; }
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
+        }
+        public string UploadImage(string filePath,long noteId,int userId)
+        {
+            try
+            {
+                var user = fundoContext.Notes.Where(x => x.UserId == userId);
+                if (user != null)
+                {
+                    var note = user.FirstOrDefault(x => x.NoteId == noteId);
+                    if (note != null)
+                    {
+                        Account account = new Account(configuration["Cloudinary:CloudName"], configuration["Cloudinary:ApiKey"], configuration["Cloudinary:ApiSecretkey"]);
+                        Cloudinary cloudinary = new Cloudinary(account);
+                        var uploadParams = new ImageUploadParams()
+                        {
+                            File = new FileDescription(filePath),
+                            PublicId = note.Title
+                        };
+                        ImageUploadResult uploadResult = cloudinary.Upload(uploadParams);
+                        note.ModifiedAt = DateTime.Now;
+                        note.Image = uploadResult.Uri.ToString();
+                        fundoContext.SaveChanges();
+                        return "Image uploaded succesful";
+                    }
+                    else
+                    {
+                        return null;
+                    }
                 }
                 else
                 {

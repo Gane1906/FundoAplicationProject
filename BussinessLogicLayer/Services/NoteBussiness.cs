@@ -116,5 +116,27 @@ namespace BussinessLogicLayer.Services
                 throw e;
             }
         }
+        public string UploadImage(string filePath, long noteId, int userId)
+        {
+            try
+            {
+                return noteRepository.UploadImage(filePath, noteId, userId);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+        public bool UpdateRemainder(long noteId, DateTime remainder, int userId)
+        {
+            try
+            {
+                return noteRepository.UpdateRemainder(noteId, remainder, userId);
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
+        }
     }
 }

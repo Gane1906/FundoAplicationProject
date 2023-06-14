@@ -23,7 +23,7 @@ namespace RepositoryLayer.Entity
         public DateTime CreatedAt { get; set; }
         public DateTime ModifiedAt { get; set; }
         [ForeignKey("User")]
-        public int UserId { get; set; }
+        public int UserId { get; set; } 
         [JsonIgnore]
         public virtual UserEntity User { get; set; }
 

@@ -17,5 +17,7 @@ namespace RepositoryLayer.Interface
         public NoteEntity UpdateNote(NoteModel note, int noteId, int userId);
         public bool DeleteNote(int userId, int noteId);
         public NoteEntity UpdateColor(string colour, int noteId, int userId);
+        public string UploadImage(string filePath, long noteId, int userId);
+        public bool UpdateRemainder(long noteId, DateTime remainder, int userId);
     }
 }
