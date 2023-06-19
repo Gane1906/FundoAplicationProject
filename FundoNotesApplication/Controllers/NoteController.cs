@@ -265,5 +265,27 @@ namespace FundoNotesApplication.Controllers
                 throw e;
             }
         }
+        [HttpGet]
+        [Route("SearchNote")]
+        public IActionResult SearchNote(string title)
+        {
+            try
+            {
+                int userId = Convert.ToInt32(User.Claims.FirstOrDefault(a => a.Type == "UserId").Value);
+                var result = noteBussiness.SearchNote(title, userId);
+                if (result != null)
+                {
+                    return Ok(new ResponseModel<NoteEntity> { status = true, message = "Note found", Data = result });
+                }
+                else
+                {
+                    return BadRequest(new ResponseModel<NoteEntity> { status = false, message = "Note not found", Data = result });
+                }
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
+        }
     }
 }

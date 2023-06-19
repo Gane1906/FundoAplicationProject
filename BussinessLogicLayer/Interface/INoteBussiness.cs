@@ -19,5 +19,6 @@ namespace BussinessLogicLayer.Interface
         public NoteEntity UpdateColor(string colour, int noteId, int userId);
         public string UploadImage(string filePath, long noteId, int userId);
         public bool UpdateRemainder(long noteId, DateTime remainder, int userId);
+        public NoteEntity SearchNote(string name, int userId);
     }
 }

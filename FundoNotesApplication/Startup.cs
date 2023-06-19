@@ -36,6 +36,10 @@ namespace FundoNotesApplication
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromHours(1);
+            });
             services.AddControllers();
             services.AddDbContext<FundoContext>(option => option.UseSqlServer(Configuration["ConnectionStrings:FundooDB"]));
             services.AddTransient<IUserRepository, UserRepository>();
@@ -44,6 +48,8 @@ namespace FundoNotesApplication
             services.AddTransient<INoteBussiness, NoteBussiness>();
             services.AddTransient<ILabelRepository, LabelRepository>();
             services.AddTransient<ILabelBussiness, LabelBusiness>();
+            services.AddTransient<ICollaboratorrepository, CollaboratorRepository>();
+            services.AddTransient<ICollaboratorBussiness, CollabortaorBussiness>();
             services.AddDistributedMemoryCache();
             services.AddStackExchangeRedisCache(options => { options.Configuration = Configuration["RedisCacheUrl"]; });
 
@@ -125,6 +131,7 @@ namespace FundoNotesApplication
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Fundo API V1");
             });
             app.UseAuthentication();
+            app.UseSession();
 
             app.UseRouting();
 

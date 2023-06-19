@@ -10,5 +10,8 @@ namespace BussinessLogicLayer.Interface
     {
         public LabelEntity AddLabel(string name, long noteId, int UserId);
         public List<LabelEntity> GetAllLabelsById(int userId);
+        public bool UpdateLabelName(string oldName, string newName);
+        public bool DeleteLableByName(string LabelName);
+        public LabelEntity CreateLabel(string labelName, long noteId, int userId);
     }
 }

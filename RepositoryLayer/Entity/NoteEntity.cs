@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
-using System.Text.Json.Serialization;
 
 namespace RepositoryLayer.Entity
 {
@@ -23,8 +22,7 @@ namespace RepositoryLayer.Entity
         public DateTime CreatedAt { get; set; }
         public DateTime ModifiedAt { get; set; }
         [ForeignKey("User")]
-        public int UserId { get; set; } 
-        [JsonIgnore]
+        public int UserId { get; set; }
         public virtual UserEntity User { get; set; }
 
     }

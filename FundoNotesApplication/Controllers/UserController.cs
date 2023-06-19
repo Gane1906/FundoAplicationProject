@@ -3,6 +3,7 @@ using BussinessLogicLayer.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using ModelLayer.Model;
 using RepositoryLayer.Context;
@@ -21,11 +22,13 @@ namespace FundoNotesApplication.Controllers
         private readonly IUserBusiness userBussiness;
         private readonly FundoContext fundoContext;
         private readonly INoteBussiness noteBussiness;
-        public UserController(IUserBusiness userBussiness,FundoContext fundoContext, INoteBussiness noteBussiness)
+        private readonly ILogger<UserController> logger;
+        public UserController(IUserBusiness userBussiness,FundoContext fundoContext, INoteBussiness noteBussiness,ILogger<UserController> logger)
         {
             this.userBussiness = userBussiness;
             this.fundoContext = fundoContext;
             this.noteBussiness = noteBussiness;
+            this.logger=logger;
         }
         [HttpPost]
         [Route("Register")]
@@ -63,15 +66,25 @@ namespace FundoNotesApplication.Controllers
         {
             try
             {
-                var output = userBussiness.Login(loginModel);
+                RegisterModel model = new RegisterModel();
+                var output= userBussiness.Login(loginModel);
                 if (output != null)
                 {
+                    HttpContext.Session.SetString("UserName", model.FirstName + " " + model.Lastname);
+                    
+                    string? name = this.HttpContext.Session.GetString("UserName");
+                    string? email = this.HttpContext.Session.GetString("UserEmail");
+                    
+                    int? userId = this.HttpContext.Session.GetInt32("UserId");
+                    logger.LogInformation("Login succesful");
                     return Ok(new ResponseModel<string> { status = true, message = "Login Succesful",Data=output });
                 }
+                logger.LogError("Login failed");
                 return BadRequest(new ResponseModel<string> { status = false, message = "Login Unsuccesful",Data=output });
             }
             catch (Exception ex)
             {
+                logger.LogCritical(ex, "Exception thrown..!");
                 throw new Exception(ex.Message);
             }
         }

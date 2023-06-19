@@ -145,6 +145,7 @@ namespace RepositoryLayer.Services
                 return null;
             }
         }
+        
         public ProductEntity AddData(AddModel add)
         {
             ProductEntity entity = new ProductEntity();
@@ -156,5 +157,6 @@ namespace RepositoryLayer.Services
             fundoContext.SaveChanges();
             return entity;
         }
+
     }
 }

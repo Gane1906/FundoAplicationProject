@@ -37,5 +37,38 @@ namespace BussinessLogicLayer.Services
                 throw e;
             }
         }
+        public bool UpdateLabelName(string oldName, string newName)
+        {
+            try
+            {
+                return labelRepository.UpdateLabelName(oldName, newName);
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
+        }
+        public bool DeleteLableByName(string LabelName)
+        {
+            try
+            {
+                return labelRepository.DeleteLableByName(LabelName);
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
+        }
+        public LabelEntity CreateLabel(string labelName, long noteId, int userId)
+        {
+            try
+            {
+                return labelRepository.CreateLabel(labelName, noteId, userId);
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
+        }
     }
 }

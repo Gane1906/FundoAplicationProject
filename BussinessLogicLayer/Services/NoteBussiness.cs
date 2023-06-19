@@ -138,5 +138,16 @@ namespace BussinessLogicLayer.Services
                 throw e;
             }
         }
+        public NoteEntity SearchNote(string name, int userId)
+        {
+            try
+            {
+                return noteRepository.SearchNote(name, userId);
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
+        }
     }
 }

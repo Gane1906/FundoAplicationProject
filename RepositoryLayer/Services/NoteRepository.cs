@@ -290,7 +290,7 @@ namespace RepositoryLayer.Services
                         };
                         ImageUploadResult uploadResult = cloudinary.Upload(uploadParams);
                         note.ModifiedAt = DateTime.Now;
-                        note.Image = uploadResult.Uri.ToString();
+                        note.Image = uploadResult.Url.ToString();
                         fundoContext.SaveChanges();
                         return "Image uploaded succesful";
                     }
@@ -303,6 +303,27 @@ namespace RepositoryLayer.Services
                 {
                     return null;
                 }
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
+        }
+        public NoteEntity SearchNote(string name,int userId)
+        {
+            try
+            {
+                var user = fundoContext.User.Where(x => x.UserId == userId);
+                if (user != null)
+                {
+                    var note = fundoContext.Notes.Where(a => a.Title == name).FirstOrDefault();
+                    if (note != null)
+                    {
+                        return note;
+                    }
+                    else { return null; }
+                }
+                else { return null; }
             }
             catch(Exception e)
             {

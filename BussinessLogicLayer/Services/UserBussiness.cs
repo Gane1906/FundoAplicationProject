@@ -1,4 +1,5 @@
 ﻿using BussinessLogicLayer.Interface;
+using Microsoft.AspNetCore.Http;
 using ModelLayer.Model;
 using RepositoryLayer.Context;
 using RepositoryLayer.Entity;
@@ -14,9 +15,11 @@ namespace BussinessLogicLayer.Services
     public class UserBussiness : IUserBusiness
     {
         private readonly IUserRepository userRepository;
-        public UserBussiness(IUserRepository userRepository)
+        private readonly IHttpContextAccessor httpContextAccessor;
+        public UserBussiness(IUserRepository userRepository, IHttpContextAccessor httpContextAccessor)
         {
             this.userRepository = userRepository;
+            this.httpContextAccessor = httpContextAccessor;
         }
         public bool IfExists(string email)
         {
